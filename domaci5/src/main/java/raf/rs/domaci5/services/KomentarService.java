@@ -4,7 +4,9 @@ import raf.rs.domaci5.entities.Komentar;
 import raf.rs.domaci5.repositories.KomentarRepository;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
+
 
 public class KomentarService {
 

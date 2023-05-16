@@ -28,6 +28,7 @@ public class PostResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Post create(Post post){
+
         return this.postService.addPost(post);
     }
 

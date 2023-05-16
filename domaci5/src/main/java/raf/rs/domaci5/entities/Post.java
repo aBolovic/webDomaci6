@@ -7,13 +7,14 @@ import java.util.List;
 
 public class Post {
 
+    private Integer id;
     private String sadrzaj;
 
     private String naslov;
     private String datumObjave;
     private String autor;
 
-    private List<Komentar> komentars = new ArrayList<>();
+    private List<Komentar> komentars;
 
 
 
@@ -28,12 +29,13 @@ public class Post {
         this.sadrzaj = sadrzaj;
 
     }
-    public Post(String sadrzaj, String naslov, String datumObjave, String autor, List<Komentar> komentars) {
+    public Post(String sadrzaj, String naslov, String datumObjave, String autor, List<Komentar> komentars, Integer id) {
+        this.id = id;
         this.sadrzaj = sadrzaj;
         this.naslov = naslov;
         this.datumObjave = datumObjave;
         this.autor = autor;
-        this.komentars = komentars;
+        this.komentars = new ArrayList<>();
 
     }
 
@@ -73,7 +75,19 @@ public class Post {
         return komentars;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public void setKomentars(List<Komentar> komentars) {
         this.komentars = komentars;
+    }
+
+    public void addKomentar(Komentar komentar){
+        this.komentars.add(komentar);
     }
 }
