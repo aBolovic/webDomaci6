@@ -20,13 +20,13 @@ public class KomentarResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response all(){
+    public Response getAllKomentari(){
         return Response.ok(this.komentarService.allKomentars()).build();
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Komentar create(Komentar komentar){
+    public Komentar createKomentar(Komentar komentar){
         return this.komentarService.addKomentar(komentar);
     }
 
