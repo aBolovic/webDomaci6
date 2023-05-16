@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blog</title>
+</head>
+<body>
+<h1>Blog</h1>
+
+<div class="list-group" id="post-list">
+  <!-- This is where the list of posts will be displayed -->
+</div>
+
+<button type="button" class="btn btn-primary" id="new-post-button">
+  New Post
+</button>
+
+<!-- Modal for adding new posts -->
+<div class="modal fade" id="new-post-modal" tabindex="-1" role="dialog" aria-labelledby="new-post-modal-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+      </div>
+      <div class="modal-body">
+        <form id="new-post-form">
+          <div class="form-group">
+            <label for="author-input">Author</label>
+            <input type="text" class="form-control" id="author-input">
+          </div>
+          <div class="form-group">
+            <label for="title-input">Title</label>
+            <input type="text" class="form-control" id="title-input">
+          </div>
+          <div class="form-group">
+            <label for="content-input">Content</label>
+            <textarea class="form-control" id="content-input" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="save-post-button">Save Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for adding new comments -->
+<div class="modal fade" id="new-comment-modal" tabindex="-1" role="dialog" aria-labelledby="new-comment-modal-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+      </div>
+      <div class="modal-body">
+        <form id="new-comment-form">
+          <div class="form-group">
+            <label for="commenter-input">Name</label>
+            <input type="text" class="form-control" id="commenter-input">
+          </div>
+          <div class="form-group">
+            <label for="comment-input">Comment</label>
+            <textarea class="form-control" id="comment-input" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="save-comment-button">Save Comment</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Define constants for DOM elements
+  const postList = document.getElementById('post-list');
+  const newPostButton = document.getElementById('new-post-button');
+  const newPostModal = document.getElementById('new-post-modal');
+  const savePostButton = document.getElementById('save-post-button');
+  const newPostForm = document.getElementById('new-post-form');
+  const commentModal = document.getElementById('comment-modal');
+  const saveCommentButton = document.getElementById('save-comment-button');
+  const commentForm = document.getElementById('comment-form');
+
+  // Add event listener for "New Post" button to show the new post form
+  newPostButton.addEventListener('click', function() {
+    newPostModal.style.display = 'block';
+  });
+
+  // Add event listener for "Save Post" button to create a new post
+  // Add event listener for "Save Post" button to create a new post
+  savePostButton.addEventListener('click', function() {
+    // Get the input values from the form
+    const authorInput = document.getElementById('author-input');
+    const titleInput = document.getElementById('title-input');
+    const contentInput = document.getElementById('content-input');
+
+    // Create a new post object with the input values
+    const newPost = {
+      autor: authorInput.value,
+      naslov: titleInput.value,
+      sadrzaj: contentInput.value,
+      datumObjave: new Date(),
+      komentars: []
+    };
+
+    // Send a POST request to the server with the new post object
+    fetch('/api/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newPost)
+    })
+            .then(response => response.json())
+            .then(post => {
+              // Create a new list item for the post and append it to the post list
+              const listItem = document.createElement('a');
+              listItem.classList.add('list-group-item', 'list-group-item-action', 'flex-column', 'align-items-start');
+              listItem.innerHTML = `
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">${post.naslov}</h5>
+            <small>${post.autor}</small>
+          </div>
+          <p class="mb-1">${post.sadrzaj}</p>
+        `;
+              listItem.addEventListener('click', function() {
+                // Show the comments for the post when the list item is clicked
+                showComments(post);
+              });
+              postList.appendChild(listItem);
+
+              // Hide the new post modal
+              newPostModal.style.display = 'none';
+
+              // Reset the form
+              newPostForm.reset();
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+  });
+
+  // Function to show the comments for a post
+  function showComments(post) {
+    // Clear the comment list
+    const commentList = document.getElementById('comment-list');
+    commentList.innerHTML = '';
+
+    // Populate the comment list with the comments for the post
+    post.komentars.forEach(komentar => {
+      const commentItem = document.createElement('li');
+      commentItem.classList.add('list-group-item');
+      commentItem.innerHTML = `
+        <div>${komentar.text}</div>
+        <small>By ${komentar.name}</small>
+      `;
+      commentList.appendChild(commentItem);
+    });
+
+    // Show the comment modal
+    commentModal.style.display = 'block';
+
+    // Add event listener for "Save Comment" button to add a new comment to the post
+    saveCommentButton.addEventListener('click', function() {
+      // Get the input values from the form
+      const commenterInput = document.getElementById('commenter-input');
+      const commentInput = document.getElementById('comment-input');
+
+      // Create a new comment object with the input values
+      const newComment = {
+        name: commenterInput.value,
+        text: commentInput.value
+      };
+
+      // Add the new comment to the post
+      post.komentars.push(newComment);
+
+      // Close the comment modal
+      commentModal.style.display = 'none';
+
+      // Reset the form
+      commentForm.reset();
+    });
+  }
+</script>
+</body>
+</html>
+
